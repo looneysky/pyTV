@@ -6,20 +6,6 @@ from flask import Flask, request, Response
 app = Flask(__name__)
 
 BASE_URL = 'http://cdntv.online/hls/46t9msx5cz'
-INVALID_KEY_IMAGE = 'invalid_key.png'
-INVALID_KEY_SEGMENT = 'invalid_key.ts'
-
-# Create .ts segment from invalid_key.png using ffmpeg
-def create_invalid_key_segment(image_path, segment_path):
-    command = [
-        'ffmpeg', '-loop', '1', '-i', image_path, '-c:v', 'libx264', '-t', '10', '-pix_fmt', 'yuv420p',
-        '-vf', 'scale=1920:1080', '-f', 'mpegts', segment_path
-    ]
-    subprocess.run(command, check=True)
-
-# Create the .ts segment if it doesn't exist
-if not os.path.exists(INVALID_KEY_SEGMENT):
-    create_invalid_key_segment(INVALID_KEY_IMAGE, INVALID_KEY_SEGMENT)
 
 @app.route('/tv/<id>.m3u8')
 def relay_playlist(id):

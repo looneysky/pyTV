@@ -1,7 +1,6 @@
 import os
 import requests
-import subprocess
-from flask import Flask, request, Response
+from flask import Flask, request, Response, send_from_directory
 
 app = Flask(__name__)
 
@@ -32,35 +31,13 @@ def relay_segment(id, segment):
     else:
         return Response(f"Error {r.status_code}: Unable to fetch the segment.", status=r.status_code)
 
-@app.route('/invalid_key_segment')
-def serve_invalid_key_segment():
-    def generate():
-        with open(INVALID_KEY_SEGMENT, 'rb') as f:
-            while chunk := f.read(1024):
-                yield chunk
-    return Response(generate(), content_type='video/MP2T')
+@app.route('/<path:filename>')
+def serve_public_files(filename):
+    return send_from_directory('public', filename)
 
-def generate_invalid_key_playlist():
-    return f"""#EXTM3U
-#EXT-X-VERSION:3
-#EXT-X-TARGETDURATION:10
-#EXT-X-MEDIA-SEQUENCE:0
-#EXTINF:10.0,
-http://{os.environ.get("INSTANCE_HOST")}:{os.environ.get("PORT")}/invalid_key_segment
-#EXTINF:10.0,
-http://{os.environ.get("INSTANCE_HOST")}:{os.environ.get("PORT")}/invalid_key_segment
-#EXTINF:10.0,
-http://{os.environ.get("INSTANCE_HOST")}:{os.environ.get("PORT")}/invalid_key_segment
-#EXTINF:10.0,
-http://{os.environ.get("INSTANCE_HOST")}:{os.environ.get("PORT")}/invalid_key_segment
-#EXTINF:10.0,
-http://{os.environ.get("INSTANCE_HOST")}:{os.environ.get("PORT")}/invalid_key_segment
-"""
-
-@app.route('/<path:path>')
-def invalid_key_response(path):
-    invalid_key_playlist = generate_invalid_key_playlist()
-    return Response(invalid_key_playlist, content_type='application/vnd.apple.mpegurl')
+@app.route('/')
+def serve_index():
+    return send_from_directory('public', 'index.html')
 
 if __name__ == '__main__':
     host = os.environ.get('INSTANCE_HOST', '0.0.0.0')

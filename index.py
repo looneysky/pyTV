@@ -6,6 +6,8 @@ app = Flask(__name__)
 
 BASE_URL = 'http://cdntv.online/hls/bc7shj5efa'
 
+#powered by dezamorfin
+
 @app.route('/tv/<id>.m3u8')
 def relay_playlist(id):
     url = f'{BASE_URL}/{id}.m3u8'

@@ -4,7 +4,7 @@ from flask import Flask, request, Response, send_from_directory
 
 app = Flask(__name__)
 
-BASE_URL = 'https://cdntv.online/hls/ynemik5cl9'
+BASE_URL = 'https://cdntv.online/hls/9mlxywika2'
 
 #powered by dezamorfin
 
